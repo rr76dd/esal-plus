@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  password     String
+  name         String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  profile      BusinessProfile?
+  invoices     Invoice[]
+  clients      Client[]
+}
+
+model BusinessProfile {
+  id           Int      @id @default(autoincrement())
+  businessName String
+  email        String
+  phone        String?
+  logo         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       Int      @unique
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model Client {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String?
+  phone        String?
+  address      String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id])
+  invoices     Invoice[]
+}
+
+model Invoice {
+  id           Int           @id @default(autoincrement())
+  invoiceNumber String       @unique
+  date         DateTime
+  dueDate      DateTime?
+  status       String        @default("draft") // draft, sent, paid
+  total        Float
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  clientId     Int
+  client       Client        @relation(fields: [clientId], references: [id])
+  userId       Int
+  user         User          @relation(fields: [userId], references: [id])
+  items        InvoiceItem[]
+}
+
+model InvoiceItem {
+  id          Int      @id @default(autoincrement())
+  description String
+  quantity    Int
+  price       Float
+  total       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  invoiceId   Int
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+}
+
+// ... existing models ... 

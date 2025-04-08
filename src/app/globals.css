@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-primary: 'TheYearOfTheCamel-Regular', system-ui, sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-primary);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '../styles/fonts.css';
+
+@font-face {
+  font-family: 'SaudiRiyal';
+  src: url('data:font/truetype;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMg8SBhQAAAC8AAAAYGNtYXAXVtKOAAABHAAAAFRnYXNwAAAAEAAAAXAAAAAIZ2x5ZgAhPjEAAAF4AAABGGhlYWQGGf9tAAACkAAAADZoaGVhB8IDxwAAAsAAAAAkaG10eAoAADAAAALkAAAAFGxvY2EAKACYAAADAAAAAChtYXhwAAkALwAAAxgAAAAgbmFtZZlKCfsAAAM4AAABhnBvc3QAAwAAAAAE4AAAACAAAwOXAZAABQAAApkCzAAAAI8CmQLMAAAB6wAzAQkAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAABAAADpAQPA/8AAQAPAAEAAAAABAAAAAAAAAAAAAAAgAAAAAAADAAAAAwAAABwAAQADAAAAHAADAAEAAAAcAAQAOAAAAAoACAACAAIAAQAg6QH//f//AAAAAAAg6QH//f//AAH/4xcDAAMAAQAAAAAAAAAAAAAAAQAB//8ADwABAAAAAAAAAAAAAgAANzkBAAAAAAEAAAAAAAAAAAACAAA3OQEAAAAAAQAAAAAAAAAAAAIAADc5AQAAAAAB//8AAAQAAsAAJQAAASImJyY0NzYyFxYUBw4BIyImNTQ2MzIWFxYUBw4BIyImNTQ2MzIWAQAHCwUGBgYSBgYGBQsHCQwMCQcLBQYGBQsHCQwMCQkMA4AGBgYSBgYGBhIGBgwJCQwGBgYSBgYGDAkJDAwAAAABAAAAAQAA2Y49il8PPPUACwQAAAAAANJ4C0YAAAAA0ngLRgAA/AAEAALAAAAACAACAAAAAAAAAAEAAAPA/8AAAAQAAAAAAAQAAAEAAAAAAAAAAAAAAAAAAAAFAAAAAAAAAAAAAAAAAgAAAAQAAAAAAAAAAAAKABQAHgBKAAEAAAAFACYAAQAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAOAK4AAQAAAAAAAQAHAAAAAQAAAAAAAgAHAGAAAQAAAAAAAwAHADYAAQAAAAAABAAHAHUAAQAAAAAABQALABUAAQAAAAAABgAHAEsAAQAAAAAACgAaAIoAAwABBAkAAQAOAAcAAwABBAkAAgAOAGcAAwABBAkAAwAOAD0AAwABBAkABAAOAHwAAwABBAkABQAWACAAAwABBAkABgAOAFIAAwABBAkACgA0AKRpY29tb29uAGkAYwBvAG0AbwBvAG5WZXJzaW9uIDEuMABWAGUAcgBzAGkAbwBuACAAMQAuADBpY29tb29uAGkAYwBvAG0AbwBvAG5pY29tb29uAGkAYwBvAG0AbwBvAG5SZWd1bGFyAFIAZQBnAHUAbABhAHJpY29tb29uAGkAYwBvAG0AbwBvAG5Gb250IGdlbmVyYXRlZCBieSBJY29Nb29uLgBGAG8AbgB0ACAAZwBlAG4AZQByAGEAdABlAGQAIABiAHkAIABJAGMAbwBNAG8AbwBuAC4AAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.saudi-riyal {
+  font-family: 'SaudiRiyal', sans-serif;
+  font-size: 1.1em;
+  line-height: 1;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@font-face {
+  font-family: 'TheYearofTheCamel';
+  src: url('/fonts/ArbFONTS-TheYearofTheCamel-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TheYearofTheCamel';
+  src: url('/fonts/ArbFONTS-TheYearofTheCamel-Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TheYearofTheCamel';
+  src: url('/fonts/ArbFONTS-TheYearofTheCamel-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
+  html {
+    font-family: 'TheYearofTheCamel', system-ui, sans-serif !important;
+    font-size: 16px;
+  }
+
+  @screen sm {
+    html {
+      font-size: 17px;
+    }
+  }
+
+  @screen lg {
+    html {
+      font-size: 18px;
+    }
+  }
+
+  body {
+    direction: rtl;
+  }
+
+  /* Increase text sizes for better readability */
+  h1 {
+    @apply text-2xl sm:text-3xl font-bold;
+  }
+
+  h2 {
+    @apply text-xl sm:text-2xl font-bold;
+  }
+
+  label {
+    @apply text-base;
+  }
+
+  input, select, textarea {
+    @apply text-base;
+  }
+
+  button {
+    @apply text-base;
+  }
+
+  table {
+    @apply text-base;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'TheYearofTheCamel', system-ui, sans-serif !important;
+  }
+  html {
+    direction: rtl;
+    font-family: 'TheYearofTheCamel', system-ui, sans-serif !important;
+  }
+}
+
+/* Font utility classes */
+.font-primary {
+  font-family: 'TheYearofTheCamel', system-ui, sans-serif !important;
+}
+
+.font-bold {
+  font-family: 'TheYearofTheCamel', system-ui, sans-serif !important;
+  font-weight: bold;
+}
+
+.font-extrabold {
+  font-family: 'TheYearOfTheCamel-ExtraBold', var(--font-primary);
+}
+
+.font-light {
+  font-family: 'TheYearOfTheCamel-Light', var(--font-primary);
+}
+
+.font-extralight {
+  font-family: 'TheYearOfTheCamel-ExtraLight', var(--font-primary);
+}
+
+.font-medium {
+  font-family: 'TheYearofTheCamel', system-ui, sans-serif !important;
+  font-weight: 500;
+}
+
+.font-thin {
+  font-family: 'TheYearOfTheCamel-Thin', var(--font-primary);
+}
+
+/* Additional styles */
+@layer components {
+  .arabic-text {
+    font-family: var(--font-primary);
+  }
+
+  /* Card title styles */
+  .card-title {
+    font-family: var(--font-primary);
+    @apply text-lg font-bold;
+  }
+
+  /* Input placeholder styles */
+  input::placeholder,
+  select::placeholder,
+  textarea::placeholder {
+    font-family: var(--font-primary);
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Sidebar styles */
+  .sidebar-link {
+    font-family: var(--font-primary);
+  }
+
+  .sidebar-link:not(.active) {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Button and Link cursor styles */
+  button {
+    @apply cursor-pointer;
+  }
+
+  button:disabled {
+    @apply cursor-not-allowed;
+  }
+
+  a {
+    @apply cursor-pointer;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    @apply cursor-text;
+  }
+
+  .btn-primary {
+    @apply bg-black text-white hover:bg-gray-800 transition-colors duration-200 py-2 px-4 rounded-md font-medium;
+  }
+  
+  .input-field {
+    @apply w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6;
+  }
+  
+  .card-title {
+    @apply text-2xl font-bold mb-2;
+  }
+  
+  .card-description {
+    @apply text-gray-600 mb-6;
+  }
+}

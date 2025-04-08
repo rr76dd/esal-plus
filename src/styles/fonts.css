@@ -1,0 +1,48 @@
+@font-face {
+    font-family: 'TheYearOfTheCamel-Bold';
+    src: url('/fonts/ArbFONTS-TheYearofTheCamel-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheYearOfTheCamel-ExtraBold';
+    src: url('/fonts/ArbFONTS-TheYearofTheCamel-ExtraBold.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheYearOfTheCamel-ExtraLight';
+    src: url('/fonts/ArbFONTS-TheYearofTheCamel-ExtraLight.otf') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheYearOfTheCamel-Light';
+    src: url('/fonts/ArbFONTS-TheYearofTheCamel-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheYearOfTheCamel-Medium';
+    src: url('/fonts/ArbFONTS-TheYearofTheCamel-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheYearOfTheCamel-Regular';
+    src: url('/fonts/ArbFONTS-TheYearofTheCamel-Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheYearOfTheCamel-Thin';
+    src: url('/fonts/ArbFONTS-TheYearofTheCamel-Thin.otf') format('opentype');
+    font-weight: 100;
+    font-style: normal;
+} 

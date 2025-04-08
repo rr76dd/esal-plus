@@ -1,0 +1,84 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isClient(clientEmail) {
+      return request.auth.token.email == clientEmail;
+    }
+
+    // Users collection rules
+    match /users/{userId} {
+      allow read: if isAuthenticated() && isOwner(userId);
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() && isOwner(userId);
+      allow delete: if isAuthenticated() && isOwner(userId);
+    }
+
+    // Invoices collection rules
+    match /invoices/{invoiceId} {
+      // Allow reading if:
+      // 1. User is authenticated AND
+      // 2. Either:
+      //    - User is the owner of the invoice OR
+      //    - User is the client of the invoice
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.clientEmail == request.auth.token.email
+      );
+      
+      // Allow creating if:
+      // 1. User is authenticated AND
+      // 2. User is setting themselves as the owner
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      
+      // Allow updating if:
+      // 1. User is authenticated AND
+      // 2. User is the owner of the invoice
+      allow update: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      
+      // Allow deleting if:
+      // 1. User is authenticated AND
+      // 2. User is the owner of the invoice
+      allow delete: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+    }
+
+    // Customers collection rules
+    match /customers/{customerId} {
+      // Allow reading if:
+      // 1. User is authenticated AND
+      // 2. User is the owner of the customer
+      allow read: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      
+      // Allow creating if:
+      // 1. User is authenticated AND
+      // 2. User is setting themselves as the owner
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      
+      // Allow updating if:
+      // 1. User is authenticated AND
+      // 2. User is the owner of the customer
+      allow update: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      
+      // Allow deleting if:
+      // 1. User is authenticated AND
+      // 2. User is the owner of the customer
+      allow delete: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+    }
+  }
+} 
