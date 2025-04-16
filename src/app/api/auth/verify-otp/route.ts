@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyStoredOTP } from '../send-otp/route';
+import { verifyStoredOTP } from '@/lib/otpUtils';
 import { auth } from '@/lib/firebase/admin';
 
 export async function POST(request: NextRequest) {
@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     if (!isValid) {
       return NextResponse.json(
-        { success: false, error: 'رمز التحقق غير صحيح أو منتهي الصلاحية' },
+        { success: false, error: 'رمز التحقق غير صالح أو منتهي الصلاحية' },
         { status: 400 }
       );
     }
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error verifying OTP:', error);
     return NextResponse.json(
-      { success: false, error: 'حدث خطأ أثناء التحقق من رمز التحقق' },
+      { success: false, error: 'حدث خطأ أثناء التحقق من الرمز' },
       { status: 500 }
     );
   }

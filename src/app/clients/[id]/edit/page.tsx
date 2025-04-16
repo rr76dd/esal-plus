@@ -12,7 +12,7 @@ import { RequiredField } from '@/components/RequiredField';
 import { auth } from '@/lib/firebase/config';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 
-export default function EditClient({ params }: { params: { id: string } }) {
+const EditClient = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
@@ -228,4 +228,6 @@ export default function EditClient({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
-} 
+}
+
+export default EditClient; 
