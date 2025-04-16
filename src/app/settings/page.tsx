@@ -46,7 +46,7 @@ export default function SettingsPage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
-  const [logoError, setLogoError] = useState<boolean>(false);
+  const [logoError, setLogoError] = useState<string | null>(null);
   const [logoLoading, setLogoLoading] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState(false);
   const [tempProfile, setTempProfile] = useState<BusinessProfile>({
@@ -90,7 +90,7 @@ export default function SettingsPage() {
         };
         setProfile(profileData);
         setTempProfile(profileData);
-        setLogoError(false);
+        setLogoError(null);
         
         if (data.logo) {
           console.log('Setting logo preview to:', data.logo);
@@ -147,6 +147,15 @@ export default function SettingsPage() {
     return () => unsubscribe();
   }, [router, fetchProfile]);
 
+  useEffect(() => {
+    if (logoError) {
+      const timer = setTimeout(() => {
+        setLogoError(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [logoError]);
+
   // إضافة فحص مسبق للصورة للتأكد من صلاحيتها
   useEffect(() => {
     if (profile.logo && profile.logo.trim() !== '' && !logoError) {
@@ -154,13 +163,13 @@ export default function SettingsPage() {
       
       img.onload = () => {
         // الصورة تم تحميلها بنجاح
-        setLogoError(false);
+        setLogoError(null);
       };
       
       img.onerror = () => {
         // فشل في تحميل الصورة
         console.log('Pre-check: Logo image failed to load');
-        setLogoError(true);
+        setLogoError('فشل في تحميل صورة الشعار، يرجى تحديث الصفحة أو رفع شعار جديد');
         resetCorruptedLogo();
       };
       
@@ -206,12 +215,7 @@ export default function SettingsPage() {
   // وظيفة لمعالجة خطأ تحميل الصورة
   const handleLogoError = () => {
     console.log('Logo image failed to load');
-    setLogoError(true);
-    
-    // إذا كان هناك خطأ في تحميل الصورة، نحاول إعادة ضبط الشعار في قاعدة البيانات
-    resetCorruptedLogo();
-    
-    toast.error('فشل في تحميل صورة الشعار، يرجى تحديث الصفحة أو رفع شعار جديد');
+    setLogoError('فشل في تحميل صورة الشعار، يرجى تحديث الصفحة أو رفع شعار جديد');
   };
 
   // وظيفة مبسطة لمعالجة الصور
@@ -326,7 +330,7 @@ export default function SettingsPage() {
         
         // تعيين الصورة المحسنة
         setLogoFile(optimizedFile);
-        setLogoError(false);
+        setLogoError(null);
         
         // إظهار معاينة الصورة
         const reader = new FileReader();
@@ -334,7 +338,7 @@ export default function SettingsPage() {
           const dataUrl = reader.result as string;
           // تخزين المعاينة مع معلومات إضافية لضمان العرض الصحيح
           setLogoPreview(dataUrl);
-          setLogoError(false);
+          setLogoError(null);
           
           // إغلاق مؤشر التحميل مع رسالة نجاح
           toast.dismiss('image-processing');

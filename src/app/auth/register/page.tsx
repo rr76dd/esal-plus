@@ -59,7 +59,7 @@ export default function RegisterPage() {
     }
     
     if (!formData.acceptTerms) {
-      newErrors.acceptTerms = 'يجب الموافقة على الشروط والأحكام' as any;
+      newErrors.acceptTerms = 'يجب الموافقة على الشروط والأحكام';
     }
     
     setErrors(newErrors);
