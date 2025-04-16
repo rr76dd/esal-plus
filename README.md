@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# إيصال بلس (Esal Plus)
 
-## Getting Started
+منصة متكاملة لإدارة الفواتير والعملاء للشركات والمؤسسات
 
-First, run the development server:
+## نظرة عامة
 
-```bash
+إيصال بلس هي منصة متخصصة في إدارة الفواتير والعملاء، مصممة خصيصاً للشركات والمؤسسات في المملكة العربية السعودية. تتميز المنصة بواجهة مستخدم سهلة الاستخدام باللغة العربية وتوفر مجموعة شاملة من الأدوات لإدارة الأعمال بكفاءة.
+
+## المميزات الرئيسية
+
+### لوحة التحكم
+- مخططات تحليل الدخل الشهري
+- مقارنة الأداء مع الشهر السابق
+- إحصائيات مفصلة عن حالة الفواتير
+- عرض شامل لأداء العمل
+
+### إدارة الفواتير
+- إنشاء وتحرير الفواتير بسهولة
+- مشاركة الفواتير عبر روابط مباشرة
+- تتبع حالة الفواتير (مدفوعة، مدفوعة جزئياً، غير مدفوعة)
+- تصدير الفواتير بصيغة CSV
+- طباعة الفواتير مباشرة من المنصة
+
+### إدارة العملاء
+- تخزين آمن لمعلومات العملاء
+- عرض سجل الفواتير لكل عميل
+- تحديث معلومات العملاء
+- إضافة ملاحظات خاصة لكل عميل
+
+### البحث المتقدم
+- نتائج بحث فورية
+- الوصول المباشر للفواتير والعملاء من نتائج البحث
+- تصفية النتائج حسب التاريخ والحالة
+
+## المتطلبات التقنية
+
+- Node.js 18.0.0 أو أحدث
+- PostgreSQL 14 أو أحدث
+- npm أو yarn
+
+## بدء الاستخدام
+
+1. نسخ المستودع:
+\`\`\`bash
+git clone https://github.com/yourusername/esal-plus.git
+cd esal-plus
+\`\`\`
+
+2. تثبيت الاعتمادات:
+\`\`\`bash
+npm install
+# أو
+yarn install
+\`\`\`
+
+3. إعداد متغيرات البيئة:
+- قم بنسخ ملف \`.env.example\` إلى \`.env\`
+- قم بتحديث المتغيرات المطلوبة
+
+4. إعداد قاعدة البيانات:
+\`\`\`bash
+npx prisma migrate dev
+\`\`\`
+
+5. تشغيل المشروع:
+\`\`\`bash
 npm run dev
-# or
+# أو
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## التقنيات المستخدمة
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [Next.js 14](https://nextjs.org)
+- [React](https://reactjs.org)
+- [Prisma](https://prisma.io)
+- [PostgreSQL](https://postgresql.org)
+- [Tailwind CSS](https://tailwindcss.com)
+- [TypeScript](https://typescriptlang.org)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## المساهمة
 
-## Learn More
+نرحب بمساهماتكم! يرجى قراءة [دليل المساهمة](CONTRIBUTING.md) للحصول على التفاصيل حول عملية تقديم التحديثات والتحسينات.
 
-To learn more about Next.js, take a look at the following resources:
+## الترخيص
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+هذا المشروع مرخص تحت [MIT License](LICENSE).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## الدعم
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+إذا واجهتك أي مشكلة أو لديك أي استفسار، يرجى فتح [issue](https://github.com/yourusername/esal-plus/issues) في المستودع.
