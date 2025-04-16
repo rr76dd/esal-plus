@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Search, Filter, Share2, Trash2, Eye, Check, CheckCheck, AlertCircle, MoreVertical, FileDown } from 'lucide-react';
+import { Plus, Search, Filter, Share2, Trash2, Eye, Check, CheckCheck, AlertCircle, MoreVertical, FileDown, Bell } from 'lucide-react';
 import { invoiceServices, Invoice as ServiceInvoice } from '@/lib/firebase/services/invoiceServices';
 import { useRouter } from 'next/navigation';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -42,6 +42,10 @@ export default function InvoicesPage() {
   const [updating, setUpdating] = useState<string | null>(null);
   const [showStatusMenu, setShowStatusMenu] = useState<string | null>(null);
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  const [reminderSending, setReminderSending] = useState<string | null>(null);
+  const [reminderSuccess, setReminderSuccess] = useState<string | null>(null);
+  const [selectedInvoices, setSelectedInvoices] = useState<string[]>([]);
+  const [bulkReminderSending, setBulkReminderSending] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -170,6 +174,109 @@ export default function InvoicesPage() {
     }
   };
 
+  const handleSendReminder = async (invoice: Invoice) => {
+    if (reminderSending || !invoice.clientEmail) return;
+    
+    try {
+      setReminderSending(invoice.id);
+      setShowStatusMenu(null);
+      const success = await invoiceServices.sendPaymentReminder(invoice.id);
+      
+      if (success) {
+        setReminderSuccess(invoice.id);
+        setTimeout(() => setReminderSuccess(null), 3000);
+        
+        // تحديث الفاتورة في القائمة المحلية
+        setInvoices(prev => prev.map(inv => 
+          inv.id === invoice.id 
+            ? { 
+                ...inv, 
+                lastReminderSent: new Date(),
+                reminderHistory: Array.isArray(inv.reminderHistory) 
+                  ? [...inv.reminderHistory, { date: new Date(), type: 'email' }]
+                  : [{ date: new Date(), type: 'email' }]
+              } 
+            : inv
+        ));
+
+        alert('تم إرسال تذكير الدفع بنجاح');
+      } else {
+        alert('فشل في إرسال تذكير الدفع');
+      }
+    } catch (error) {
+      console.error('Error sending payment reminder:', error);
+      alert(error instanceof Error ? error.message : 'حدث خطأ أثناء إرسال تذكير الدفع');
+    } finally {
+      setReminderSending(null);
+    }
+  };
+
+  const handleBulkSendReminders = async () => {
+    const unpaidInvoices = invoices.filter(inv => 
+      inv.status !== 'paid' && 
+      inv.clientEmail && 
+      selectedInvoices.includes(inv.id)
+    );
+    
+    if (unpaidInvoices.length === 0) {
+      alert('لم يتم تحديد أي فواتير غير مدفوعة لها بريد إلكتروني');
+      return;
+    }
+    
+    if (!confirm(`هل تريد إرسال تذكير لعدد ${unpaidInvoices.length} فاتورة؟`)) {
+      return;
+    }
+    
+    setBulkReminderSending(true);
+    
+    let successCount = 0;
+    let failCount = 0;
+    
+    for (const invoice of unpaidInvoices) {
+      try {
+        const success = await invoiceServices.sendPaymentReminder(invoice.id);
+        if (success) {
+          successCount++;
+          
+          // تحديث الفاتورة في القائمة المحلية
+          setInvoices(prev => prev.map(inv => 
+            inv.id === invoice.id 
+              ? { 
+                  ...inv, 
+                  lastReminderSent: new Date(),
+                  reminderHistory: Array.isArray(inv.reminderHistory) 
+                    ? [...inv.reminderHistory, { date: new Date(), type: 'email' }]
+                    : [{ date: new Date(), type: 'email' }]
+                } 
+              : inv
+          ));
+        } else {
+          failCount++;
+        }
+      } catch (error) {
+        console.error(`Error sending reminder for invoice ${invoice.id}:`, error);
+        failCount++;
+      }
+    }
+    
+    setBulkReminderSending(false);
+    setSelectedInvoices([]);
+    
+    if (successCount > 0) {
+      alert(`تم إرسال ${successCount} تذكير بنجاح${failCount > 0 ? ` وفشلت ${failCount} تذكيرات` : ''}`);
+    } else if (failCount > 0) {
+      alert(`فشل في إرسال ${failCount} تذكيرات`);
+    }
+  };
+  
+  const toggleInvoiceSelection = (invoiceId: string) => {
+    setSelectedInvoices(prev => 
+      prev.includes(invoiceId) 
+        ? prev.filter(id => id !== invoiceId) 
+        : [...prev, invoiceId]
+    );
+  };
+
   if (loading) {
     return <LoadingIndicator />;
   }
@@ -224,18 +331,37 @@ export default function InvoicesPage() {
                 يمكنك البحث باسم العميل أو رقم الفاتورة أو جوال العميل أو بريده الإلكتروني
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-400" />
-              <select
-                className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as FilterStatus)}
-              >
-                <option value="all">جميع الحالات</option>
-                <option value="unpaid">غير مدفوعة</option>
-                <option value="partially_paid">مدفوعة جزئيا</option>
-                <option value="paid">مدفوعة</option>
-              </select>
+            <div className="flex flex-col sm:flex-row items-center gap-2">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-gray-400" />
+                <select
+                  className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value as FilterStatus)}
+                >
+                  <option value="all">جميع الحالات</option>
+                  <option value="unpaid">غير مدفوعة</option>
+                  <option value="partially_paid">مدفوعة جزئيا</option>
+                  <option value="paid">مدفوعة</option>
+                </select>
+              </div>
+              
+              {selectedInvoices.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleBulkSendReminders}
+                  disabled={bulkReminderSending}
+                  className="flex items-center gap-2 border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100"
+                >
+                  {bulkReminderSending ? (
+                    <div className="h-4 w-4 border-2 border-t-transparent border-orange-600 rounded-full animate-spin"></div>
+                  ) : (
+                    <Bell className="h-4 w-4" />
+                  )}
+                  إرسال تذكير ({selectedInvoices.length})
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>
@@ -247,6 +373,30 @@ export default function InvoicesPage() {
             <table className="w-full">
               <thead className="bg-gray-50 text-right">
                 <tr>
+                  <th className="px-2 py-4 text-sm font-medium text-gray-500">
+                    <input 
+                      type="checkbox" 
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          // تحديد جميع الفواتير غير المدفوعة بالكامل
+                          setSelectedInvoices(
+                            filteredInvoices
+                              .filter(inv => inv.status !== 'paid' && inv.clientEmail)
+                              .map(inv => inv.id)
+                          );
+                        } else {
+                          setSelectedInvoices([]);
+                        }
+                      }}
+                      checked={
+                        filteredInvoices.length > 0 &&
+                        filteredInvoices
+                          .filter(inv => inv.status !== 'paid' && inv.clientEmail)
+                          .every(inv => selectedInvoices.includes(inv.id))
+                      }
+                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                  </th>
                   <th className="px-6 py-4 text-sm font-medium text-gray-500">رقم الفاتورة</th>
                   <th className="px-6 py-4 text-sm font-medium text-gray-500">العميل</th>
                   <th className="px-6 py-4 text-sm font-medium text-gray-500">المبلغ</th>
@@ -258,6 +408,16 @@ export default function InvoicesPage() {
               <tbody className="divide-y divide-gray-200">
                 {filteredInvoices.map((invoice) => (
                   <tr key={invoice.id} className="hover:bg-gray-50">
+                    <td className="px-2 py-4 text-sm">
+                      {invoice.status !== 'paid' && invoice.clientEmail && (
+                        <input 
+                          type="checkbox" 
+                          checked={selectedInvoices.includes(invoice.id)}
+                          onChange={() => toggleInvoiceSelection(invoice.id)}
+                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        />
+                      )}
+                    </td>
                     <td className="px-6 py-4 text-sm">#{invoice.invoiceNumber}</td>
                     <td className="px-6 py-4 text-sm">{invoice.clientName}</td>
                     <td className="px-6 py-4 text-sm flex items-center gap-1">
@@ -279,9 +439,9 @@ export default function InvoicesPage() {
                         {/* قائمة الإجراءات */}
                         <div className="relative">
                           {showStatusMenu === `action_${invoice.id}` && (
-                            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 transition-all duration-200" onClick={() => setShowStatusMenu(null)}>
+                            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50" onClick={() => setShowStatusMenu(null)}>
                               <div 
-                                className="absolute bg-white border shadow-xl rounded-md z-50 w-48 max-h-[80vh] overflow-y-auto transition-all duration-200 animate-in fade-in"
+                                className="absolute bg-white border shadow-xl rounded-md z-50 w-48 max-h-[80vh] overflow-y-auto"
                                 style={{
                                   position: 'fixed',
                                   top: windowWidth <= 768 
@@ -327,6 +487,25 @@ export default function InvoicesPage() {
                                     <FileDown className="h-4 w-4" />
                                     تحميل الفاتورة PDF
                                   </button>
+                                  
+                                  {/* زر إرسال تذكير الدفع - يظهر فقط للفواتير غير المدفوعة بالكامل وإذا كان هناك بريد إلكتروني للعميل */}
+                                  {invoice.status !== 'paid' && invoice.clientEmail && (
+                                    <button 
+                                      className={`px-3 py-2 text-right text-sm rounded-md hover:bg-gray-100 flex items-center gap-2 w-full transition-colors ${reminderSuccess === invoice.id ? 'text-green-600' : ''}`}
+                                      onClick={() => handleSendReminder(invoice)}
+                                      disabled={reminderSending === invoice.id}
+                                    >
+                                      {reminderSending === invoice.id ? (
+                                        <div className="h-4 w-4 border-2 border-t-transparent border-gray-600 rounded-full animate-spin"></div>
+                                      ) : reminderSuccess === invoice.id ? (
+                                        <Check className="h-4 w-4" />
+                                      ) : (
+                                        <Bell className="h-4 w-4" />
+                                      )}
+                                      {reminderSuccess === invoice.id ? 'تم إرسال التذكير' : 'إرسال تذكير بالدفع'}
+                                    </button>
+                                  )}
+                                  
                                   <div className="border-t my-1"></div>
                                   <div className="px-3 py-1 text-xs text-gray-500 select-none">تغيير الحالة إلى:</div>
                                   <button 
@@ -371,7 +550,7 @@ export default function InvoicesPage() {
                             variant="outline" 
                             size="sm"
                             onClick={() => setShowStatusMenu(showStatusMenu === `action_${invoice.id}` ? null : `action_${invoice.id}`)}
-                            className="bg-black hover:bg-black/90 text-white border-0"
+                            className="bg-black hover:bg-black/90 text-white border-0 transition-all duration-200 hover:scale-105 active:scale-95"
                           >
                             <MoreVertical className="h-4 w-4" />
                           </Button>
@@ -382,7 +561,7 @@ export default function InvoicesPage() {
                 ))}
                 {filteredInvoices.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
                       لا توجد فواتير مطابقة للبحث
                     </td>
                   </tr>

@@ -7,11 +7,18 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+// UserType enum for user subscription levels
+enum UserType {
+  FREE
+  PLUS
+}
+
 model User {
   id           Int            @id @default(autoincrement())
   email        String         @unique
   password     String
   name         String?
+  userType     UserType       @default(FREE)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   profile      BusinessProfile?

@@ -203,9 +203,9 @@ export default function ClientsPage() {
                             </Button>
                             
                             {showStatusMenu === `action_${customer.id}` && (
-                              <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 transition-all duration-200" onClick={() => setShowStatusMenu(null)}>
+                              <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50" onClick={() => setShowStatusMenu(null)}>
                                 <div 
-                                  className="absolute bg-white border shadow-xl rounded-md z-50 w-48 max-h-[80vh] overflow-y-auto transition-all duration-200 animate-in fade-in"
+                                  className="absolute bg-white border shadow-xl rounded-md z-50 w-48 max-h-[80vh] overflow-y-auto"
                                   style={{
                                     position: 'fixed',
                                     top: windowWidth <= 768 

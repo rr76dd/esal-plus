@@ -56,6 +56,7 @@ interface User {
   name: string;
   phone?: string;
   address?: string;
+  userType: 'FREE' | 'PLUS';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -140,6 +141,7 @@ export const userServices = {
     try {
       const docRef = await addDoc(usersCollection, {
         ...userData,
+        userType: userData.userType || 'FREE',
         createdAt: new Date(),
         updatedAt: new Date()
       });

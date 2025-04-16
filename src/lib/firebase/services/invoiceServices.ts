@@ -2,6 +2,7 @@ import { collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc, query, 
 import { db } from '../config';
 import { auth } from '../config';
 import { Timestamp } from 'firebase/firestore';
+import { sendPaymentReminderEmail } from '@/app/api/email/actions';
 
 export interface InvoiceItem {
   id: string;
@@ -37,6 +38,8 @@ export interface Invoice {
   updatedAt: Date;
   userId?: string;
   logo?: string;
+  lastReminderSent?: Date;
+  reminderHistory?: { date: Date; type: string }[];
 }
 
 class InvoiceServices {
@@ -188,6 +191,52 @@ class InvoiceServices {
     if (invoice.userId !== user.uid) throw new Error('Unauthorized');
 
     await deleteDoc(docRef);
+  }
+
+  async sendPaymentReminder(invoiceId: string): Promise<boolean> {
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error('المستخدم غير مسجل الدخول، يرجى تسجيل الدخول مرة أخرى');
+
+      // الحصول على بيانات الفاتورة
+      const invoice = await this.getInvoiceById(invoiceId);
+      if (!invoice) throw new Error('الفاتورة غير موجودة');
+      
+      // التحقق من أن الفاتورة تنتمي للمستخدم الحالي
+      if (invoice.userId !== user.uid) throw new Error('ليس لديك صلاحية للوصول إلى هذه الفاتورة');
+
+      // التحقق من أن الفاتورة غير مدفوعة
+      if (invoice.status === 'paid') throw new Error('الفاتورة مدفوعة بالفعل');
+
+      // التحقق من وجود بريد إلكتروني للعميل
+      if (!invoice.clientEmail) throw new Error('لا يوجد بريد إلكتروني للعميل');
+
+      // إرسال التذكير عبر البريد الإلكتروني باستخدام فعل الخادم
+      const emailSent = await sendPaymentReminderEmail(
+        invoice.clientEmail,
+        invoice.invoiceNumber,
+        invoice.businessName,
+        invoice.clientName,
+        invoice.total,
+        invoice.dueDate,
+        invoice.paymentLink
+      );
+
+      // تحديث الفاتورة بإضافة سجل التذكير
+      if (emailSent) {
+        await this.updateInvoice(invoiceId, {
+          lastReminderSent: new Date(),
+          reminderHistory: Array.isArray(invoice.reminderHistory) 
+            ? [...invoice.reminderHistory, { date: new Date(), type: 'email' }]
+            : [{ date: new Date(), type: 'email' }]
+        });
+      }
+
+      return emailSent;
+    } catch (error) {
+      console.error('Error sending payment reminder:', error);
+      throw error;
+    }
   }
 }
 
