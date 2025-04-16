@@ -7,6 +7,8 @@
       "argsIgnorePattern": "^_",
       "varsIgnorePattern": "^_",
       "ignoreRestSiblings": true
-    }]
+    }],
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-empty-interface": "error"
   }
 } 

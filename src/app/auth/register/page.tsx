@@ -19,9 +19,17 @@ interface FormData {
   acceptTerms: boolean;
 }
 
+interface FormErrors {
+  fullName?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  acceptTerms?: string;
+}
+
 export default function RegisterPage() {
   const [formData, setFormData] = useState<FormData>({ fullName: '', email: '', password: '', confirmPassword: '', acceptTerms: false });
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState('');
   
@@ -40,7 +48,7 @@ export default function RegisterPage() {
   };
 
   const validateForm = () => {
-    const newErrors: Partial<FormData> = {};
+    const newErrors: FormErrors = {};
     
     if (!formData.fullName.trim()) {
       newErrors.fullName = 'الرجاء إدخال الاسم الكامل';

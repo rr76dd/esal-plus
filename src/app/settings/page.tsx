@@ -47,14 +47,7 @@ export default function SettingsPage() {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [logoError, setLogoError] = useState<string | null>(null);
-  const [logoLoading, setLogoLoading] = useState<boolean>(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempProfile, setTempProfile] = useState<BusinessProfile>({
-    businessName: '',
-    email: '',
-    phone: '',
-    logo: ''
-  });
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const [passwordData, setPasswordData] = useState<PasswordData>({
     currentPassword: '',
     newPassword: '',
@@ -62,7 +55,6 @@ export default function SettingsPage() {
   });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
-  const [logoFile, setLogoFile] = useState<File | null>(null);
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -89,8 +81,6 @@ export default function SettingsPage() {
           logo: data.logo || ''
         };
         setProfile(profileData);
-        setTempProfile(profileData);
-        setLogoError(null);
         
         if (data.logo) {
           console.log('Setting logo preview to:', data.logo);
@@ -120,7 +110,6 @@ export default function SettingsPage() {
           // تحديث وضع الصورة في الملف الشخصي
           profileData.logo = logoUrl;
           setProfile(profileData);
-          setTempProfile(profileData);
         } else {
           setLogoPreview(null);
         }
@@ -204,7 +193,6 @@ export default function SettingsPage() {
         console.log('Logo reset successfully in database');
         // تحديث الملف الشخصي المحلي لإزالة الشعار
         setProfile(prev => ({ ...prev, logo: '' }));
-        setTempProfile(prev => ({ ...prev, logo: '' }));
         setLogoPreview(null);
       }
     } catch (error) {
@@ -625,7 +613,6 @@ export default function SettingsPage() {
                       onClick={() => {
                         setLogoPreview(null);
                         setProfile(prev => ({ ...prev, logo: '' }));
-                        setTempProfile(prev => ({ ...prev, logo: '' }));
                       }}
                       className="border-gray-300 hover:bg-gray-100"
                       size="sm"
