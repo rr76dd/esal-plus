@@ -12,7 +12,11 @@ import { RequiredField } from '@/components/RequiredField';
 import { auth } from '@/lib/firebase/config';
 import { LoadingIndicator } from '@/components/LoadingIndicator';
 
-const EditClient = ({ params }: { params: { id: string } }) => {
+export default function EditClient({
+  params,
+}: {
+  params: { id: string };
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
@@ -48,10 +52,10 @@ const EditClient = ({ params }: { params: { id: string } }) => {
           company: customer.company || '',
           address: customer.address || ''
         });
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching customer:', error);
         setError('حدث خطأ أثناء جلب بيانات العميل');
+      } finally {
         setLoading(false);
       }
     };
@@ -228,6 +232,4 @@ const EditClient = ({ params }: { params: { id: string } }) => {
       </div>
     </div>
   );
-}
-
-export default EditClient; 
+} 
